@@ -2,14 +2,14 @@ const Clarifai = require('clarifai');
 
 //You must add your own API key here from Clarifai.
 const app = new Clarifai.App({
- apiKey: 'YOUR_API_KEY_HERE'
+ apiKey: '8d1e4f36a71a4190a7fc90a850201200'
 });
 
 const handleApiCall = (req, res) => {
   app.models
     .predict(Clarifai.FACE_DETECT_MODEL, req.body.input)
     .then(data => {
-      res.json(data);
+      res.json(data);//中繼站
     })
     .catch(err => res.status(400).json('unable to work with API'))
 }
@@ -17,10 +17,10 @@ const handleApiCall = (req, res) => {
 const handleImage = (req, res, db) => {
   const { id } = req.body;
   db('users').where('id', '=', id)
-  .increment('entries', 1)
+  .increment('entries', 1)//increment: (column, increase amount)
   .returning('entries')
-  .then(entries => {
-    res.json(entries[0]);
+  .then(entries => {//entries db回傳的資料
+    res.json(entries[0]);// entries[0], return object not array
   })
   .catch(err => res.status(400).json('unable to get entries'))
 }
