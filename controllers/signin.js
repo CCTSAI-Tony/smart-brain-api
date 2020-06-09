@@ -8,7 +8,7 @@ const handleSignin = (db, bcrypt) => (req, res) => {//advanced javascript func p
     .then(data => {
       const isValid = bcrypt.compareSync(password, data[0].hash);
       if (isValid) {
-        return db.select('*').from('users')// don't forget to put return here to let the upper promise knows
+        return db.select('*').from('users')  //nested promise 要用return 連起來
           .where('email', '=', email)
           .then(user => {
             res.json(user[0])//responding json
@@ -24,7 +24,7 @@ const handleSignin = (db, bcrypt) => (req, res) => {//advanced javascript func p
 module.exports = {
   handleSignin: handleSignin
 }
-// db.select from knex return callback function, 因此若不return nested db.select, 裡面的call back function 不會被上層db.select執行
+// db.select from knex then return callback function, 因此若不return nested db.select, 裡面的call back function 不會被上層db.select執行
 
 // knex select() returns a promise so that you can continue the flow within then() function.
 
@@ -42,3 +42,5 @@ module.exports = {
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 // promise chain 需要用then retrun連起來, or then =>
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
+// 終於想通了, 若不return, db.select then 再呼叫db.select 便結束handleSignin 這個function, 不管你nested db.select then 的下一步
+// 然而若加return 則是會等到nested db.select then 的下一步
