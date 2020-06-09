@@ -34,13 +34,16 @@ module.exports = {
 // });
 
 // why we need to put return on the nested db.select:
-// 因為若不return, call back 的是 nested db.select 整個promise, 而不是nested db.select要call back的內容
-// 等於上層db.selectn 完成搜索then => promise 做以下事情並結束
-// 若沒retrun 就是promise 再做一次 db.select 結束, 裡面回傳的內容不care
-// 若retrun, 則是retrun nested db.select 所要promise的內容
+
 // promise 的return 跟一般retrun 不一樣, 要注意!!
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
 // promise chain 需要用then retrun連起來, or then =>
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
-// 終於想通了, 若不return, db.select then 再呼叫db.select 便結束handleSignin 這個function, 不管你nested db.select then 的下一步
-// 然而若加return 則是會等到nested db.select then 的下一步
+// 終於想通了, 若不return, db.select then 再呼叫db.select 若之後有then, 不管你nested db.select then 的下一步, 會直接執行下一個then
+// 然而若加return 則是會等到nested db.select 執行完畢 才會進行下一個then 
+
+// Similarly, when we use a promise chaining, we need to return the promises.
+// When we don’t return the promises, the consecutive then methods will not realise that
+// it needs to wait for a promise in the sequence and simply assumes it as another line of code to be executed,
+// there by losing its async nature.
+// https://codeburst.io/playing-with-javascript-promises-a-comprehensive-approach-25ab752c78c3
