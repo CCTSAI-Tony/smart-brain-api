@@ -40,7 +40,11 @@ module.exports = {
 // promise chain 需要用then retrun連起來, or then =>
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
 // 終於想通了, 若不return, db.select then 再呼叫db.select 若之後有then, 不管你nested db.select then 的下一步, 會直接執行下一個then
-// 然而若加return 則是會等到nested db.select 執行完畢 才會進行下一個then 
+// 若無下一個then, 則會直接結束程式 promise status 直接resolved, promiseValue 為 undefined, 也就是說等不到nested promise的下一步call back function
+// 前一個promise已結束
+
+// 然而若加return 則是會等到nested db.select 執行完畢 才會進行下一個then 或結束程序
+
 
 // Similarly, when we use a promise chaining, we need to return the promises.
 // When we don’t return the promises, the consecutive then methods will not realise that
